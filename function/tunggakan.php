@@ -1,0 +1,2 @@
+<?php
+include("db.php");$sql2 = "select * from jenis_tunggakan order by id_tunggakan asc";$qu3 = mysqli_query($koneksi,$sql2) or die("database error:". mysqli_error($koneksi));echo "<option value='0'>Pilih Tunggakan</option>";while($s=mysqli_fetch_array($qu3)) {	echo "<option value='".$s['id_tunggakan']."'>".$s['nama_tunggakan']."</option>";};?>
