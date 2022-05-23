@@ -73,8 +73,13 @@ $pdf->useTemplate($tplIdx,0,0,200);
 $pdf->SetFont('Helvetica','',10);
 //$pdf->SetTextColor(255, 0, 0);
 //Nomor Ujian
+if(empty($siswa['nisn'])){
+	$nopes='D0879'.substr($siswa['nis'],5,4);
+}else{
+	$nopes='D0879'.substr($siswa['nisn'],6,4);
+};
 $pdf->SetXY(40, 23);
-$pdf->Write(0, $siswa['nisn']);
+$pdf->Write(0, $nopes);
 
 //nama
 $pdf->SetXY(40, 27.2);
@@ -94,8 +99,8 @@ $tempdir = "../modul/qrcode/temp/";
 if (!file_exists($tempdir)){
 	mkdir($tempdir);
 };
-$isi_teks = $siswa['nisn'];
-$namafile = $siswa['nisn'].".png";
+$isi_teks = $nopes;
+$namafile = $nopes.".png";
 $quality = 'H'; //ada 4 pilihan, L (Low), M(Medium), Q(Good), H(High)
 $ukuran = 5; //batasan 1 paling kecil, 10 paling besar
 $padding = 2;
