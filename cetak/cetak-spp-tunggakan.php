@@ -91,7 +91,7 @@ function namahari($tanggal){
 
 	$tapel=$_GET['tapel'];
 $kelas=$_GET['kelas'];
-$bulan=(int) $_GET['bulan'];
+$smt=$_GET['smt'];
 $jenis=$_GET['jenis'];
 $thn=isset($_GET['thn']) ? $_GET['thn'] : date("Y");
 $bln = array("Juli", "Agustus", "September", "Oktober", "November", "Desember", "Januari", "Februari", "Maret", "April", "Mei", "Juni");
@@ -135,7 +135,7 @@ $bln = array("Juli", "Agustus", "September", "Oktober", "November", "Desember", 
 			$table2->easyCell('JUN','align:C');
 			$table2->printRow(true);
 			
-			$sql2="select * from penempatan where rombel='$kelas' and tapel='$tapel'";
+			$sql2="select * from penempatan where rombel='$kelas' and tapel='$tapel' and smt='$smt'";
 			$query2 = $connect->query($sql2);
 			$nomor=1;
 			while($n=$query2->fetch_assoc()) {

@@ -1,4 +1,5 @@
 <?php
+include "../modul/qrcode/phpqrcode/qrlib.php";
  include 'fpdf/fpdf.php';
  include 'exfpdf.php';
  include 'easyTable.php';
@@ -114,7 +115,42 @@ $bln = array("Juli", "Agustus", "September", "Oktober", "November", "Desember", 
 		$table2->rowStyle('min-height:3');
 		$table2->easyCell('Website: https://sdi-aljannah.web.id email: sdi.aljannah@gmail.com','font-size:7;align:C;');
 		$table2->printRow();
-		$table2->easyCell('','img:../modul/qrcode/temp/'.$nomor.',w30;align:C;valign:M');
+		$tempdir = "../modul/qrcode/temp/";
+		if (!file_exists($tempdir)){
+			mkdir($tempdir);
+		};
+		$logopath="logo.png";
+		$isi_teks = $siswa['peserta_didik_id'];
+		$namafile = $isi_teks.".png";
+		$quality = 'H'; //ada 4 pilihan, L (Low), M(Medium), Q(Good), H(High)
+		$ukuran = 5; //batasan 1 paling kecil, 10 paling besar
+		$padding = 2;
+
+		//QRCode::png($isi_teks,$tempdir.$namafile,$quality,$ukuran,$padding);
+		QRcode::png($isi_teks,$tempdir.'qrwithlogo.png', QR_ECLEVEL_H, 10,4);
+		$QR = imagecreatefrompng($tempdir.'qrwithlogo.png');
+		$logo = imagecreatefromstring(file_get_contents($logopath));
+		imagecolortransparent($logo , imagecolorallocatealpha($logo , 0, 0, 0, 127));
+		 imagealphablending($logo , false);
+		 imagesavealpha($logo , true);
+
+		 $QR_width = imagesx($QR);
+		 $QR_height = imagesy($QR);
+
+		 $logo_width = imagesx($logo);
+		 $logo_height = imagesy($logo);
+		$logo_qr_width = $QR_width/4;
+		 $scale = $logo_width/$logo_qr_width;
+		 $logo_qr_height = $logo_height/$scale;
+
+		 imagecopyresampled($QR, $logo, $QR_width/2.6, $QR_height/2.6, 0, 0, $logo_qr_width, $logo_qr_height, $logo_width, $logo_height);
+
+		 // Simpan kode QR lagi, dengan logo di atasnya
+		 imagepng($QR,$tempdir.$namafile);
+		$table2->easyCell('','img:../modul/qrcode/temp/'.$namafile.',w30;align:C;valign:M');
+		$table2->printRow();
+		$table2->rowStyle('min-height:5');
+		$table2->easyCell('kunjungi https://sdi-aljannah.web.id/cek-tunggakan/ dan arahkan QRCode diatas!','font-size:6;font-style:B;align:C;valign:M;border:0');
 		$table2->printRow();
 		$table2->rowStyle('min-height:10');
 		$table2->easyCell($siswa['nama'],'font-size:12;font-style:B;align:C;valign:M;border:1');
@@ -127,7 +163,7 @@ $bln = array("Juli", "Agustus", "September", "Oktober", "November", "Desember", 
 		$table2->easyCell('','font-size:12;font-style:B;align:C;valign:M');
 		$table2->easyCell($siswa['nis'],'font-size:12;font-style:B;align:C;valign:M;border:1');
 		$table2->printRow();
-		$table2->endTable(10);
+		$table2->endTable(7);
 		
 		$table2=new easyTable($pdf, '{110}');
 		$table2->easyCell('KARTU INFAQ BULANAN','font-size:14;font-style:B;align:C;');

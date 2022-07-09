@@ -94,15 +94,15 @@ function namahari($tanggal){
 	$jprinter=$connect->query("select * from printer where status='1'")->fetch_assoc();
 		$pdf=new exFPDF('P','mm',array(110,330));
 		$pdf->AddPage(); 
-		$pdf->SetFont('helvetica','',8);
+		$pdf->SetFont('helvetica','',12);
 
-		$table2=new easyTable($pdf, '{70,40}');
+		$table2=new easyTable($pdf, '{90,20}');
 		$table2->rowStyle('min-height:15');
-		$table2->easyCell($nasabah['nama'].' ['.$nasabah['nasabah_id'].']','valign:M;align:C;font-style:B;;border:1');
-		$table2->easyCell('BUKU TABUNGAN','valign:M;align:C;font-style:B;border:1');
+		$table2->easyCell($nasabah['nama'],'valign:M;align:C;font-style:B;;border:1');
+		$table2->easyCell($nasabah['nasabah_id'],'valign:M;align:C;font-style:B;border:1');
 		$table2->printRow();
 		$table2->endTable();
-		
+		$pdf->SetFont('helvetica','',8);
 		$table2=new easyTable($pdf, '{6,22,5,20,22,22,13}');
 		$table2->rowStyle('min-height:5');
 		$table2->easyCell('#','valign:M;align:C;font-style:B;;border:1');

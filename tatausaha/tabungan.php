@@ -11,6 +11,7 @@ $data['title'] = 'Tabungan';
 include "../template/head.php";
 date_default_timezone_set('Asia/Jakarta');
 ?>
+<script type="text/javascript" src="../assets/js/index.min.js"></script>
 </head>
 
 <body>
@@ -30,9 +31,7 @@ date_default_timezone_set('Asia/Jakarta');
           <div class="section-body">
             <div class="row">
 				<div class="col-6">
-					<div class="card">
-						
-						<div class="card-body">
+					
 						<?php $jprinter=$connect->query("select * from printer where status='1'")->fetch_assoc(); ?>
 							<input type="hidden" name="txtPdfFile" id="txtPdfFile" value="../cetak/cetak-tabungan.pdf" />
 							<input type="hidden" name="txtPdfFilec" id="txtPdfFilec" value="../cetak/cetak-tabungan1.pdf" />
@@ -40,17 +39,18 @@ date_default_timezone_set('Asia/Jakarta');
 							<input type="hidden" name="lstPrinters" id="lstPrinters" value="<?=$jprinter['nama'];?>" />
 							<input type="hidden" name="lstPrinterTrays" id="lstPrinterTrays" value="" />
 							<input type="hidden" name="lstPrinterPapers" id="lstPrinterPapers" value="<?=$jprinter['tabungan'];?>" />
-							<ul class="list-unstyled list-unstyled-border user-list" id="message-list">
-								<li class="media">
-									<img alt="image" src="../assets/img/users/user-1.png"
-									  class="mr-3 user-img-radious-style user-list-img">
-									<div class="media-body">
-									  <div class="mt-0 font-weight-bold nama-nasabah">Masukkan ID Nasabah</div>
-									  <div class="text-small saldosiswa"></div>
+							<div class="card author-box">
+								  <div class="card-body">
+									<div class="author-box-left">
+									  <video id="previewKamera" style="width: 110px;height: 110px;"></video>
 									</div>
-								</li>
-							</ul>
-							<form class="form" action="tabungan" method="GET" id="tabID">
+									<div class="author-box-details">
+									  <div class="author-box-name">
+										<a href="#" class="nama-nasabah">Masukkan ID Nasabah</a>
+									  </div>
+									  <div class="author-box-job saldosiswa">Saldo Rp. 00,00 </div>
+									</div>
+									<form class="form" action="tabungan" method="GET" id="tabID">
 								<div class="row">
 									  <div class="form-group col-md-6">
 										<label for="inputEmail4">Tanggal Transaksi</label>
@@ -58,7 +58,7 @@ date_default_timezone_set('Asia/Jakarta');
 									  </div>
 									  <div class="form-group col-md-6">
 										<label>Jenis Transaksi</label>
-										<select class="form-control select2" name="jenis" id="jenis" style="width: 100%;">
+										<select class="form-control" name="jenis" id="jenis">
 											<option value="1">Setoran</option>
 											<option value="2">Pengambilan</option>
 										</select>
@@ -79,9 +79,11 @@ date_default_timezone_set('Asia/Jakarta');
 									  </div>
 								</div>
 							</form>
+							
+								  </div>
 							</div>
-					</div>
-							<div class="card">
+
+					<div class="card">
 								<div class="card-header">
 								  <h4>Data Tabungan</h4>
 								  <div class="card-header-form cetaktotal">
@@ -89,24 +91,23 @@ date_default_timezone_set('Asia/Jakarta');
 								  </div>
 								</div>
 								<div class="card-body">
+									<div class="table-responsive">
 									<table id="ceksaldo" class="table table-striped table-hover">
 									  <thead>
 										<tr>
 										  <th>Tanggal</th>
-										  <th>Kode</th>
 										  <th>Setor</th>
 										  <th>Ambil</th>
 										  <th>Saldo</th>
+										  <th></th>
 										</tr>
 									  </thead>
 									  <tbody id="hasilsaldo">
-										<tr>
-										  <td colspan="5"><center>Belum Ada Data</center></td>
-										</tr>
 									  </tbody>
 									</table>
+									</div>
 								</div>
-							</div>
+							</div>		
 			
 				</div>
 				<div class="col-6">
@@ -119,7 +120,8 @@ date_default_timezone_set('Asia/Jakarta');
 						</div>
 						<div class="card-body">
 							<div id="transaksi"></div>
-							<div class="box-body table-responsive">
+							<div class="box-body">
+								<div class="table-responsive">
 								<table id="tabelTransaksi" class="table table-sm table-bordered table-hover">
 									<thead>
 													   <tr>
@@ -134,9 +136,12 @@ date_default_timezone_set('Asia/Jakarta');
 													
 													</tbody>
 								</table>
+								</div>
 							</div>
 						</div>
 					</div>
+					
+					
 				</div>
 			</div>
           </div>
@@ -177,6 +182,7 @@ date_default_timezone_set('Asia/Jakarta');
 <script src="<?= base_url(); ?>assets/js/zip-full.min.js"></script>
 <script src="<?= base_url(); ?>assets/js/JSPrintManager.js"></script>
 <script src="<?= base_url(); ?>assets/js/bluebird.min.js"></script>
+
 <script type="text/javascript">
 	var clientPrinters = null;
     var _this = this;
@@ -355,6 +361,7 @@ date_default_timezone_set('Asia/Jakarta');
 		function eraseText() {
 			document.getElementById("idNasabah").value = "";
 			document.getElementById("rupiah").value = "";
+			document.getElementById("jenis").value = "1";
 		}
 		function PopupCenter(pageURL, title,w,h) {
 			var left = (screen.width/2)-(w/2);
@@ -363,6 +370,7 @@ date_default_timezone_set('Asia/Jakarta');
 		};
 		
 		var tabelTransaksi;
+		var tabelhistori;
 	$(document).ready(function() {
 		var tanggal = $('#tanggal').val();
 		function viewTr(){
@@ -426,7 +434,22 @@ date_default_timezone_set('Asia/Jakarta');
 					$("#hasilsaldo").html('<td colspan="5"><center><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading ...</center></td>');
 				},
 			  success: function(data) {
+				  
 				$('#hasilsaldo').html(data);
+				$("#ceksaldo").dataTable({
+					pageLength: 5,
+										lengthMenu: [
+											[5, 10, 20],
+											[5, 10, 20],
+										],
+										autoWidth: !1,
+										responsive: !0,
+				  "destroy":true,
+				  "columnDefs": [
+					{ "sortable": false, "targets": [2, 3] }
+				  ]
+				});
+				//tabelhistori = $('#ceksaldo').DataTable();
 			  }
 			});
 			};
@@ -498,6 +521,12 @@ date_default_timezone_set('Asia/Jakarta');
 							},
 						  success: function(data) {
 							$('#hasilsaldo').html(data);
+							$("#ceksaldo").dataTable({
+							  "destroy":true,
+							  "columnDefs": [
+								{ "sortable": false, "targets": [2, 3] }
+							  ]
+							});
 							$('#idNasabah').val(response.idN);
 							$("#idNasabah").focus();
 							var tanggal = $('#tanggal').val();
@@ -641,6 +670,12 @@ date_default_timezone_set('Asia/Jakarta');
 								  cache: false,
 								  success: function(data) {
 									$('#hasilsaldo').html(data);
+									$("#ceksaldo").dataTable({
+									  "destroy":true,
+									  "columnDefs": [
+										{ "sortable": false, "targets": [2, 3] }
+									  ]
+									});
 								  }
 								});
 								$(".saldosiswa").html(response.saldo);
@@ -688,7 +723,13 @@ date_default_timezone_set('Asia/Jakarta');
 								$("#idNasabah").focus();
 
 							} else {
-								
+								swal({
+									title: 'Saldo Kurang',
+									text: response.messages,
+									icon: 'error',
+									closeOnClickOutside: false,
+									dangerMode: true,
+								});
 								$("#rupiah").select();
 							}  // /else
 						} // success  
@@ -739,6 +780,12 @@ date_default_timezone_set('Asia/Jakarta');
 								  cache: false,
 								  success: function(data) {
 									$('#hasilsaldo').html(data);
+									$("#ceksaldo").dataTable({
+									  "destroy":true,
+									  "columnDefs": [
+										{ "sortable": false, "targets": [2, 3] }
+									  ]
+									});
 								  }
 								});
 
@@ -793,5 +840,116 @@ date_default_timezone_set('Asia/Jakarta');
       $("#idNasabah").focus();
   })
 </script>
+<script>
+        let selectedDeviceId = null;
+        const codeReader = new ZXing.BrowserMultiFormatReader();
+        const sourceSelect = $("#pilihKamera");
+ 
+        $(document).on('change','#pilihKamera',function(){
+            selectedDeviceId = $(this).val();
+            if(codeReader){
+                codeReader.reset()
+                initScanner()
+            }
+        })
+ 
+        function initScanner() {
+            codeReader
+            .listVideoInputDevices()
+            .then(videoInputDevices => {
+                videoInputDevices.forEach(device =>
+                    console.log(`${device.label}, ${device.deviceId}`)
+                );
+ 
+                if(videoInputDevices.length > 0){
+                     
+                    if(selectedDeviceId == null){
+                        if(videoInputDevices.length > 1){
+                            selectedDeviceId = videoInputDevices[1].deviceId
+                        } else {
+                            selectedDeviceId = videoInputDevices[0].deviceId
+                        }
+                    }
+                     
+                     
+                    if (videoInputDevices.length >= 1) {
+                        sourceSelect.html('');
+                        videoInputDevices.forEach((element) => {
+                            const sourceOption = document.createElement('option')
+                            sourceOption.text = element.label
+                            sourceOption.value = element.deviceId
+                            if(element.deviceId == selectedDeviceId){
+                                sourceOption.selected = 'selected';
+                            }
+                            sourceSelect.append(sourceOption)
+                        })
+                 
+                    }
+ 
+                    codeReader
+                        .decodeOnceFromVideoDevice(selectedDeviceId, 'previewKamera')
+                        .then(result => {
+ 
+                                //hasil scan
+                                console.log(result.text)
+                                $("#idNasabah").val(result.text);
+								doneTyping()
+								$.ajax({
+								  type: 'POST',
+								  url: '../modul/tabungan/lihatsaldo.php',
+								  data: {
+									search: $("#idNasabah").val()
+								  },
+								  cache: false,
+								  beforeSend: function()
+									{	
+										$("#hasilsaldo").html('<td colspan="5"><center><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading ...</center></td>');
+									},
+								  success: function(data) {
+									  
+									$('#hasilsaldo').html(data);
+									$("#ceksaldo").dataTable({
+										pageLength: 5,
+										lengthMenu: [
+											[5, 10, 20],
+											[5, 10, 20],
+										],
+										autoWidth: !1,
+										responsive: !0,
+									  "destroy":true,
+									  "columnDefs": [
+										{ "sortable": false, "targets": [2, 3] }
+									  ]
+									});
+									//tabelhistori = $('#ceksaldo').DataTable();
+								  }
+								});
+								//$("#idNasabah").hide();
+								if(codeReader){
+                                    codeReader.reset()
+									initScanner()
+                                }
+								
+                        })
+                        .catch(err => console.error(err));
+                     
+                } else {
+                    alert("Camera not found!")
+                }
+            })
+            .catch(err => console.error(err));
+        }
+ 
+ 
+        if (navigator.mediaDevices) {
+             
+ 
+            initScanner()
+             
+ 
+        } else {
+            alert('Cannot access camera.');
+        };
+     </script>
 </body>
 </html>

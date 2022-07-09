@@ -34,7 +34,8 @@ $tapel=$_GET['tapel'];
 			$avatarm="user-default.png";
 		};
 		$actionButton = '
-			<button class="btn btn-sm btn-danger" data-pdid="'.$idp.'" data-tapel="'.$tapel.'" data-smt="'.$smt.'" id="cetakDepan"><i class="fas fa-print"></i> C</button>
+			<button class="btn btn-sm btn-danger" data-pdid="'.$idp.'" data-tapel="'.$tapel.'" data-smt="'.$smt.'" id="cetakDepan"><i class="fas fa-print"></i></button>
+			<button class="btn btn-sm btn-danger" data-pdid="'.$idp.'" data-tapel="'.$tapel.'" data-smt="'.$smt.'" id="previewkartu"><i class="fas fa-search"></i></button>
 			';
 		$tgl=ucfirst(strtolower($row['tempat'])).", ".TanggalIndo($row['tanggal']);
 		$namasis=$row['nama'];

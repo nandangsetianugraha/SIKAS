@@ -259,7 +259,7 @@ include "../template/head.php";
             cpj.clientPrinter = myPrinter;
 
             //Set PDF file
-            var my_file = new JSPM.PrintFilePDF("../cetak/cetak-cover-tabungan.pdf", JSPM.FileSourceType.URL, 'cetak-cover-tabungan.pdf', 1);
+            var my_file = new JSPM.PrintFilePDF("../cetak/cetak-cover-tabungan2.pdf", JSPM.FileSourceType.URL, 'cetak-cover-tabungan2.pdf', 1);
             my_file.printRotation = JSPM.PrintRotation[$('#lstPrintRotation').val()];
             my_file.printRange = $('#txtPagesRange').val();
             my_file.printAnnotations = $('#chkPrintAnnotations').prop('checked');

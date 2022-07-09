@@ -47,7 +47,7 @@ if($_GET) {
 			$saldo=$cekmasuk['setoran']-$cekkeluar['penarikan'];
 			if($okjon>$saldo){
 				$validator['success'] = false;
-				$validator['messages'] = "Saldonya Kurang dari Penarikan!!";
+				$validator['messages'] = "Saldonya Kurang dari Penarikan!! Saldo Tabungan : ".rupiah($saldo);
 			}else{
 				$sql1 = "insert into tabungan(tanggal,kode,nasabah_id,masuk,keluar) values('$tgl','$jns','$nasabah','0','$okjon')";
 				$query1 = $connect->query($sql1);

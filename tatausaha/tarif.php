@@ -141,12 +141,13 @@ include "../template/head.php";
   $(document).ready(function() {
 	  var kelas=$('#kelas').val();
 	  var tapel=$('#tapel').val();
+	  var smt=$('#smt').val();
 	  var tung=$('#jtung').val();
   	  SPPku = $("#SPPku").DataTable({
 		"destroy":true,
 		"searching": false,
 		"paging":false,
-		"ajax": "../modul/pembayaran/tarif.php?kelas="+kelas+"&tapel="+tapel+"&jenis="+tung,
+		"ajax": "../modul/pembayaran/tarif.php?kelas="+kelas+"&tapel="+tapel+"&smt="+smt+"&jenis="+tung,
 		"order": []
 	  });
 	  $('#kelas').change(function(){

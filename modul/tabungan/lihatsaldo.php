@@ -21,10 +21,10 @@ if (isset($_POST['search'])) {
  ?>
 <tr>
   <td><?= $row['tanggal']; ?></td>
-  <td><?= $row['kode']; ?></td>
   <td><?= rupiah($debet); ?></td>
   <td><?= rupiah($kredit); ?></td>
-  <td><?= rupiah($saldo); ?><button class="btn btn-sm btn-icon btn-primary" data-idsaldo="<?=$saldo;?>" data-idinv="<?=$idin;?>" id="printinv"><i class="fas fa-print"></i></button></td>
+  <td><?= rupiah($saldo); ?></td>
+  <td><button class="btn btn-sm btn-icon btn-primary" data-idsaldo="<?=$saldo;?>" data-idinv="<?=$idin;?>" id="printinv"><i class="fas fa-print"></i></button></td>
 </tr>
 <?php }
 }else{

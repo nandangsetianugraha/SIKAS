@@ -70,7 +70,7 @@ $bulan = array("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "
 								<div class="col-md-5">
 									<div class="form-group form-group-default">
 										<select class="form-control select2" id="kelas">
-											<option value="0">Pilih Kelas</option>
+											<option value="0">Semua Kelas</option>
 											<?php 
 											$sql_mk=mysqli_query($koneksi, "select * from rombel where tapel='$tapel_aktif' order by nama_rombel asc");
 											while($nk=mysqli_fetch_array($sql_mk)){
@@ -83,7 +83,12 @@ $bulan = array("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "
 								</div>
 								<div class="col-md-2">
 									<div class="form-group form-group-default">
-										<button class="btn btn-primary btn-icon" id="cetaklaporan"><i class="fas fa-print"></i> Lihat/Cetak</button>
+										<button class="btn btn-primary btn-icon" id="cetaklaporan"><i class="fas fa-print"></i> Cetak PDF</button>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group form-group-default">
+										<button class="btn btn-primary btn-icon" id="cetakexcel"><i class="fas fa-print"></i> Cetak Excel</button>
 									</div>
 								</div>
 							</div> <!--Akhir Row-->
@@ -150,6 +155,16 @@ $bulan = array("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "
 				PopupCenter('../cetak/rekapitulasi.php?kelas='+kelas+'&bulan='+bulan+'&jenis='+jenis+'&tapel='+tapel+'&smt='+smt, 'Cetak Invoice',800,800);
 			}
 			
+		});
+		$(document).on('click', '#cetakexcel', function(e){
+		
+			e.preventDefault();
+			var bulan=$('#bulan').val();
+			var kelas=$('#kelas').val();
+			var jenis=$('#jenis').val();
+			var tapel=$('#tapel').val();
+			var smt=$('#smt').val();
+			window.open('../cetak/rekapitulasi-excel.php?kelas='+kelas+'&bulan='+bulan+'&jenis='+jenis+'&tapel='+tapel+'&smt='+smt);
 		});
   });
   function PopupCenter(pageURL, title,w,h) {

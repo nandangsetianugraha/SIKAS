@@ -82,10 +82,16 @@ $pdf->SetXY(40, 23);
 $pdf->Write(0, $nopes);
 
 //nama
+if(strlen($siswa['nama'])>27){
+	$pdf->SetFont('Helvetica','',7.5);
+}else{
+	$pdf->SetFont('Helvetica','',10);
+};
 $pdf->SetXY(40, 27.2);
 $pdf->Write(0, $siswa['nama']);
 
 //Tempat Tanggal Lahir
+$pdf->SetFont('Helvetica','',10);
 $pdf->SetXY(40, 31.4);
 $pdf->Write(0, $siswa['tempat'].", ".TanggalIndo($siswa['tanggal']));
 

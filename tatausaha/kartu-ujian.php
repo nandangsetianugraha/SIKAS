@@ -167,6 +167,16 @@ $(document).ready(function(){
 			//PopupCenter('../cetak/cetak-kartu.php?idspp='+uidspp, 'myPop1',800,800);
 			
 		});
+	$(document).on('click', '#previewkartu', function(e){
+		
+			e.preventDefault();
+			
+			var pdid = $(this).data('pdid');
+			var tapel = $(this).data('tapel');
+			var smt = $(this).data('smt');
+			PopupCenter('../cetak/prev-kartu-ujian.php?idp='+pdid+'&tapel='+tapel+'&smt='+smt, 'myPop1',800,400);
+			
+		});
 });  
 function PopupCenter(pageURL, title,w,h) {
 		var left = (screen.width/2)-(w/2);

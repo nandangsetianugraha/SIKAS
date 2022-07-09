@@ -33,7 +33,7 @@ function base_url($param = []) {
   */
 
 
-  $base_url = 'https://sikas.sdi-aljannah.web.id/';
+  $base_url = 'http://localhost:8080/sikas/';
   $result = (!$param) ? $base_url : $base_url . $param;
 
   return $result;

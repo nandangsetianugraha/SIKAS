@@ -31,7 +31,6 @@ date_default_timezone_set('Asia/Jakarta');
             <div class="col-6">
 				<div class="form-row">
 					<div class="form-group col-md-12">
-						<label>Siswa</label>
 						<input type="hidden" name="tapel" id="tapel" class="form-control" value="<?=$tapel;?>" placeholder="Username">
 						<input type="hidden" name="smt" id="smt" class="form-control" value="<?=$smt;?>" placeholder="Username">
 						<?php $jprinter=$connect->query("select * from printer where status='1'")->fetch_assoc(); ?>
@@ -41,17 +40,66 @@ date_default_timezone_set('Asia/Jakarta');
 						<input type="hidden" name="lstPrinterPapersCetakKartu" id="lstPrinterPapersCetakKartu" value="<?=$jprinter['spp'];?>" />
 						<input type="hidden" name="txtPdfFileCetakInvoice" id="txtPdfFileCetakInvoice" value="../cetak/cetak-kartu.pdf" />
 						<input type="hidden" name="lstPrinterPapersCetakInvoice" id="lstPrinterPapersCetakInvoice" value="<?=$jprinter['kwitansi'];?>" />
-						<select class="form-control select2" id="siswa">
-							<option value="0">Pilih Siswa</option>
-							<?php 
-							$sql_mk=mysqli_query($koneksi, "select * from siswa order by nama asc");
-							while($nk=mysqli_fetch_array($sql_mk)){
-								$idsiswa=$nk['peserta_didik_id'];
-								$rmb=mysqli_fetch_array(mysqli_query($koneksi, "select * from penempatan where peserta_didik_id='$idsiswa' and tapel='$tapel' and smt='$smt'"));
-							?>
-							<option value="<?=$nk['peserta_didik_id'];?>"><?=$nk['nama'];?> [<?=$rmb['rombel'];?>]</option>
-							<?php };?>
-						</select>
+						<div id="accordion">
+							<div class="accordion">
+								<div class="accordion-header" role="button" data-toggle="collapse" data-target="#panel-body-1"
+								  aria-expanded="true">
+								  <h4>QRCode</h4>
+								</div>
+							</div>
+							<div class="accordion-body collapse show" id="panel-body-1" data-parent="#accordion">
+								<div class="card author-box card-primary">
+								  <div class="card-body">
+									<div class="author-box-left">
+									  <video id="previewKamera" style="width: 110px;height: 110px;"></video>
+									</div>
+									<div class="author-box-details">
+									  <div class="author-box-name">
+										<a href="#" class="nama-siswa">Nama Siswa</a>
+									  </div>
+									  <div class="author-box-job kelas-siswa">Kelas </div>
+									</div>
+								  </div>
+								</div>
+							</div>
+							<div class="accordion">
+								<div class="accordion-header" role="button" data-toggle="collapse" data-target="#panel-body-2">
+								  <h4>Manual</h4>
+								</div>
+								<div class="accordion-body collapse" id="panel-body-2" data-parent="#accordion">
+									<div class="card author-box card-primary">
+									  <div class="card-body">
+										<div class="author-box-left">
+										  <div class="gbr"><img alt="image" src="../assets/img/users/user-1.png" class="rounded-circle author-box-picture"></div>
+										</div>
+										<div class="author-box-details">
+										  <div class="author-box-name">
+											<a href="#" class="nama-siswa">Nama Siswa</a>
+										  </div>
+										  <div class="author-box-job kelas-siswa">Kelas </div>
+										  <select class="form-control" id="siswa" style="width:100%;">
+											<option value="0">Pilih Siswa</option>
+											<?php 
+											$sql_mk=mysqli_query($koneksi, "select * from siswa where status=1 order by nama asc");
+											while($nk=mysqli_fetch_array($sql_mk)){
+												$idsiswa=$nk['peserta_didik_id'];
+												$rmb=mysqli_fetch_array(mysqli_query($koneksi, "select * from penempatan where peserta_didik_id='$idsiswa' and tapel='$tapel' and smt='$smt'"));
+											?>
+											<option value="<?=$nk['peserta_didik_id'];?>"><?=$nk['nama'];?></option>
+											<?php };?>
+										  </select>
+										</div>
+									  </div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<form class="form" action="tabungan" method="GET" id="tabID">
+							<input type="hidden" name="idpd" id="idpd">
+						</form>
+						
+						
 					</div>
                 </div>
 				<div class="card">
@@ -109,6 +157,21 @@ date_default_timezone_set('Asia/Jakarta');
                 </div>
 			</div>
 			<div class="col-6">
+				<div class="card card-statistic-1">
+				  <div class="card-icon l-bg-orange">
+					<i class="fas fa-dollar-sign"></i>
+				  </div>
+				  <div class="card-wrap">
+					<div class="padding-20">
+					  <div class="text-right">
+						<h3 class="font-light mb-0">
+						  <i class="ti-arrow-up text-success"></i> <div id="tabungan">Rp 00,00</div>
+						</h3>
+						<span class="text-muted">Jumlah Tabungan</span>
+					  </div>
+					</div>
+				  </div>
+				</div>
 				<div class="card">
                   <div class="card-header">
                     <h4>Pembayaran</h4>
@@ -118,7 +181,7 @@ date_default_timezone_set('Asia/Jakarta');
                   </div>
                   <div class="collapse show" id="mycard-collapse">
                     <div class="card-body">
-                      <div class="table-responsive">
+					  <div class="table-responsive">
 							<table class="table table-striped" id="tabelbayar">
 								<thead>
 									<tr>
@@ -133,7 +196,20 @@ date_default_timezone_set('Asia/Jakarta');
 						</div>
                     </div>
                     <div class="card-footer">
-                      <button class="btn btn-icon icon-left btn-primary" id="bayarnow"><i class="far fa-edit"></i> Bayar</button>
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-12">
+							<select class="form-control" name="jbayar" id="jbayar">
+								<option value="1">Tunai</option>
+								<option value="2">Tabungan</option>
+								<option value="3">Transfer Bank</option>
+							</select>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-12">
+								<button class="btn btn-icon icon-left btn-primary" id="bayarnow"><i class="far fa-edit"></i> Bayar</button>
+							</div>
+						</div>
+					  
+                      
 					  <!--<button class="btn btn-icon icon-left btn-primary" id="bayarprint"><i class="far fa-edit"></i> Simpan dan Cetak</button>-->
                     </div>
                   </div>
@@ -319,6 +395,7 @@ date_default_timezone_set('Asia/Jakarta');
   <script src="<?= base_url(); ?>assets/js/zip-full.min.js"></script>
   <script src="<?= base_url(); ?>assets/js/JSPrintManager.js"></script>
   <script src="<?= base_url(); ?>assets/js/bluebird.min.js"></script>
+  <script type="text/javascript" src="../assets/js/index.min.js"></script>
   <script>
 	var clientPrinters = null;
     var _this = this;
@@ -326,7 +403,26 @@ date_default_timezone_set('Asia/Jakarta');
     //WebSocket settings
     JSPM.JSPrintManager.auto_reconnect = true;
     JSPM.JSPrintManager.start();
-
+	
+	function doneTyping() {
+		  $.post("../modul/pembayaran/cek-siswa.php",$("#tabID").serialize(),function (res) {
+			  //$("span.loading").removeClass("fa fa-spinner fa-spin");
+			  response = $.parseJSON(res);
+			  if(response.status!=="no_nasabah"){
+				  $(".nama-siswa").html(response.namaLengkap);
+				  $(".kelas-siswa").html(response.kelas);
+				  $(".gbr").html(response.gambar);
+				  // console.log(response);
+			  }else{
+				  $(".nama-siswa").html("Siswa tidak terdaftar");
+				  $(".kelas-siswa").html("");
+				  $(".gbr").html(response.gambar);
+				  // console.log(response);
+			  }
+		  });
+		}
+	
+	
     //Check JSPM WebSocket status
     function jspmWSStatus() {
         if (JSPM.JSPrintManager.websocket_status == JSPM.WSStatus.Open)
@@ -436,9 +532,78 @@ date_default_timezone_set('Asia/Jakarta');
 	var tabelbayar;
 	var tabelriwayat;
 	$(document).ready(function() {
+	
+		$('#siswa').select2({
+			allowClear: true,
+            placeholder: 'Cari Nama Siswa',
+            ajax: {
+                dataType: 'json',
+                url: '../modul/siswa/data-siswa.php',
+				delay: 800,
+                data: function (params) {
+                    return {
+                        search: params.term
+                    }
+                },
+                processResults: function (data, page) {
+                    return {
+						results: data
+                    };
+                },
+            }
+        });
+		$('#siswa').on('select2:select', function (e) {
+			var data = e.params.data;
+			console.log(data.id);
+			$("#idpd").val(data.id);
+			doneTyping();
+			var siswa = data.id;			
+			var tapel = $('#tapel').val();	
+			var smt = $('#smt').val();
+			var tanggal = $('#tanggal').val();
+			tabelspp = $('#tabelspp').DataTable( {
+				"destroy":true,
+				"searching": false,
+				"paging":false,
+				"ajax": "../modul/pembayaran/tunggakan-spp.php?siswa="+siswa+"&tapel="+tapel,
+				"order": []
+			} );
+			tabellain = $('#tabellain').DataTable( {
+				"destroy":true,
+				"searching": false,
+				"paging":false,
+				"ajax": "../modul/pembayaran/tunggakan-lain.php?siswa="+siswa+"&tapel="+tapel,
+				"order": []
+			} );
+			tabelriwayat = $('#tabelriwayat').DataTable( {
+				"destroy":true,
+				"searching": false,
+				"paging":false,
+				"ajax": "../modul/pembayaran/riwayat.php?siswa="+siswa+"&tapel="+tapel,
+				"order": []
+			} );
+			tabelbayar = $('#tabelbayar').DataTable( {
+				"destroy":true,
+				"searching": false,
+				"paging":false,
+				"ajax": "../modul/pembayaran/sementara.php?siswa="+siswa+"&tanggal="+tanggal,
+				"order": []
+			} );
+          	$.ajax({
+				type : 'GET',
+				url : '../modul/tabungan/cek-tab.php',
+				data :  'siswa='+siswa,
+				dataType : 'json',
+				success: function (response) {
+					$("#tabungan").html(response.messages);					
+				}
+			});
+		});
 		
 		$('#siswa').change(function(){
 			//Mengambil value dari option select mp kemudian parameternya dikirim menggunakan ajax
+			$("#idpd").val($('#siswa').val());
+			doneTyping();
 			var siswa = $('#siswa').val();			
 			var tapel = $('#tapel').val();	
 			var smt = $('#smt').val();
@@ -470,7 +635,16 @@ date_default_timezone_set('Asia/Jakarta');
 				"paging":false,
 				"ajax": "../modul/pembayaran/sementara.php?siswa="+siswa+"&tanggal="+tanggal,
 				"order": []
-			} );	
+			} );
+          	$.ajax({
+				type : 'GET',
+				url : '../modul/tabungan/cek-tab.php',
+				data :  'siswa='+siswa,
+				dataType : 'json',
+				success: function (response) {
+					$("#tabungan").html(response.messages);					
+				}
+			});
 		});
 		
 		$(document).on('click', '#getBayar', function(e){
@@ -533,13 +707,14 @@ date_default_timezone_set('Asia/Jakarta');
 			var siswa = $('#siswa').val();			
 			var tapel = $('#tapel').val();	
 			var tanggal = $('#tanggal').val();
+			var jbayar = $('#jbayar').val();
 			if(siswa==0){
 				swal('Pilih Siswanya dulu', {buttons: false,timer: 2000,});
 			}else{
 				$.ajax({
 					type : 'GET',
 					url : '../modul/pembayaran/bayarnow.php',
-					data :  'siswa='+siswa+'&tapel='+tapel+'&tanggal='+tanggal,
+					data :  'siswa='+siswa+'&tapel='+tapel+'&tanggal='+tanggal+'&jenis='+jbayar,
 					dataType: 'json',
 					beforeSend: function()
 					{	
@@ -547,31 +722,44 @@ date_default_timezone_set('Asia/Jakarta');
 					},
 					success: function (data) {
 						$('#bayarnow').removeClass('disabled btn-progress');
-						tabelbayar.ajax.reload(null, false);	
-						tabelspp.ajax.reload(null, false);
-						tabellain.ajax.reload(null, false);
-						tabelriwayat.ajax.reload(null, false);
-						swal({
-							title: 'Berhasil',
-							text: 'Pembayaran berhasil disimpan, apakah akan mencetak kwitansi?',
-							icon: 'success',
-							buttons: ["Batal", "Print"],
-							dangerMode: true,
-						})
-						.then((willDelete) => {
-						  if (willDelete) {
-								$.ajax({
-									type : 'GET',
-									url : '../cetak/cetak-invoice.php',
-									data :  'idinv='+data.messages,
-									success: function (response) {
-										printInvoice();												
-									}
-								});
-						  } else {
-							
-						  }
-						});
+						if(data.success == true) {
+							tabelbayar.ajax.reload(null, false);	
+							tabelspp.ajax.reload(null, false);
+							tabellain.ajax.reload(null, false);
+							tabelriwayat.ajax.reload(null, false);
+							$.ajax({
+								type : 'GET',
+								url : '../modul/tabungan/cek-tab.php',
+								data :  'siswa='+siswa,
+								dataType : 'json',
+								success: function (response) {
+									$("#tabungan").html(response.messages);					
+								}
+							});
+							swal({
+								title: 'Berhasil',
+								text: 'Pembayaran berhasil disimpan, apakah akan mencetak kwitansi?',
+								icon: 'success',
+								buttons: ["Batal", "Print"],
+								dangerMode: true,
+							})
+							.then((willDelete) => {
+							  if (willDelete) {
+									$.ajax({
+										type : 'GET',
+										url : '../cetak/cetak-invoice.php',
+										data :  'idinv='+data.messages,
+										success: function (response) {
+											printInvoice();												
+										}
+									});
+							  } else {
+								
+							  }
+							});
+						}else{
+							swal(data.messages, {buttons: false,timer: 2000,});
+						};
 					}
 				});
 			}
@@ -618,7 +806,17 @@ date_default_timezone_set('Asia/Jakarta');
 					url : '../modul/pembayaran/hapus-invoice.php',
 					data :  'idinv='+idinv,
 					success: function (data) {
-						tabelspp.ajax.reload(null, false);
+						var siswa = $('#siswa').val();			
+						var tapel = $('#tapel').val();	
+						var smt = $('#smt').val();
+						var tanggal = $('#tanggal').val();
+						tabelspp = $('#tabelspp').DataTable( {
+							"destroy":true,
+							"searching": false,
+							"paging":false,
+							"ajax": "../modul/pembayaran/tunggakan-spp.php?siswa="+siswa+"&tapel="+tapel,
+							"order": []
+						} );
 						tabellain.ajax.reload(null, false);
 						tabelriwayat.ajax.reload(null, false);
 					}
@@ -966,5 +1164,131 @@ date_default_timezone_set('Asia/Jakarta');
 		var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
 	};
   </script>
+  <script>
+        let selectedDeviceId = null;
+        const codeReader = new ZXing.BrowserMultiFormatReader();
+        const sourceSelect = $("#pilihKamera");
+ 
+        $(document).on('change','#pilihKamera',function(){
+            selectedDeviceId = $(this).val();
+            if(codeReader){
+                codeReader.reset()
+                initScanner()
+            }
+        })
+ 
+        function initScanner() {
+            codeReader
+            .listVideoInputDevices()
+            .then(videoInputDevices => {
+                videoInputDevices.forEach(device =>
+                    console.log(`${device.label}, ${device.deviceId}`)
+                );
+ 
+                if(videoInputDevices.length > 0){
+                     
+                    if(selectedDeviceId == null){
+                        if(videoInputDevices.length > 1){
+                            selectedDeviceId = videoInputDevices[1].deviceId
+                        } else {
+                            selectedDeviceId = videoInputDevices[0].deviceId
+                        }
+                    }
+                     
+                     
+                    if (videoInputDevices.length >= 1) {
+                        sourceSelect.html('');
+                        videoInputDevices.forEach((element) => {
+                            const sourceOption = document.createElement('option')
+                            sourceOption.text = element.label
+                            sourceOption.value = element.deviceId
+                            if(element.deviceId == selectedDeviceId){
+                                sourceOption.selected = 'selected';
+                            }
+                            sourceSelect.append(sourceOption)
+                        })
+                 
+                    }
+ 
+                    codeReader
+                        .decodeOnceFromVideoDevice(selectedDeviceId, 'previewKamera')
+                        .then(result => {
+ 
+                                //hasil scan
+                                console.log(result.text)
+                                //$("#idNasabah").val(result.text);
+								var $newOption = $("<option selected='selected'></option>").val(result.text).text("")
+								$("#siswa").append($newOption).trigger('change');
+								$('#panel-body-2').collapse('show');
+								$("#idpd").val(result.text);
+								doneTyping();
+								var siswa = result.text;			
+								var tapel = $('#tapel').val();	
+								var smt = $('#smt').val();
+								var tanggal = $('#tanggal').val();
+								tabelspp = $('#tabelspp').DataTable( {
+									"destroy":true,
+									"searching": false,
+									"paging":false,
+									"ajax": "../modul/pembayaran/tunggakan-spp.php?siswa="+siswa+"&tapel="+tapel,
+									"order": []
+								} );
+								tabellain = $('#tabellain').DataTable( {
+									"destroy":true,
+									"searching": false,
+									"paging":false,
+									"ajax": "../modul/pembayaran/tunggakan-lain.php?siswa="+siswa+"&tapel="+tapel,
+									"order": []
+								} );
+								tabelriwayat = $('#tabelriwayat').DataTable( {
+									"destroy":true,
+									"searching": false,
+									"paging":false,
+									"ajax": "../modul/pembayaran/riwayat.php?siswa="+siswa+"&tapel="+tapel,
+									"order": []
+								} );
+								tabelbayar = $('#tabelbayar').DataTable( {
+									"destroy":true,
+									"searching": false,
+									"paging":false,
+									"ajax": "../modul/pembayaran/sementara.php?siswa="+siswa+"&tanggal="+tanggal,
+									"order": []
+								} );
+								$.ajax({
+									type : 'GET',
+									url : '../modul/tabungan/cek-tab.php',
+									data :  'siswa='+siswa,
+									dataType : 'json',
+									success: function (response) {
+										$("#tabungan").html(response.messages);					
+									}
+								});
+								//$("#idNasabah").hide();
+								if(codeReader){
+                                    codeReader.reset()
+									initScanner()
+                                }
+								
+                        })
+                        .catch(err => console.error(err));
+                     
+                } else {
+                    alert("Camera not found!")
+                }
+            })
+            .catch(err => console.error(err));
+        }
+ 
+ 
+        if (navigator.mediaDevices) {
+             
+ 
+            initScanner()
+             
+ 
+        } else {
+            alert('Cannot access camera.');
+        };
+     </script>
 </body>
 </html>
